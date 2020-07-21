@@ -1,3 +1,10 @@
+/*!
+ * 60W Constant Current Electronic Load Capture Serial Data
+ * 
+ * Licensed under MIT 
+ * Copyright (c) 2017-2020 [Samuel Carreira]
+ */
+
 'use strict';
 
 const fs = require('fs');
@@ -10,6 +17,8 @@ class WriteSerialData {
      * Construct Write Serial Data class
      * @param {string} filename filename (relative to current path)
      * @param {number} interval interval in ms (default 1000ms)
+     * 
+     * TODO: maxdata stop condition
      */
     constructor(filename, interval, maxdata) {
         this.interval = interval || 1000;
@@ -18,7 +27,7 @@ class WriteSerialData {
         })
         this.lastTime = 0;
 
-        this.logStream.on('error',  (err) => {
+        this.logStream.on('error', (err) => {
             console.error('Error: ', err.message);
             process.exit(0)
         });
@@ -37,7 +46,7 @@ class WriteSerialData {
 
             this.lastTime = timeNow;
             const formatedData = this.formatData(data, timeNow);
-            
+
             if (formatedData) {
                 this.logStream.write(formatedData);
             } else {
@@ -51,7 +60,7 @@ class WriteSerialData {
             return false // invalid data, last digit must be 1
         }
 
-        const outputData = data.substring(0,2) + "," + data.substring(2,4);
+        const outputData = data.substring(0, 2) + "," + data.substring(2, 4);
 
         return this.convertTime(currentTime) + "; " + outputData + "\r\n";
     }
@@ -70,8 +79,16 @@ class WriteSerialData {
     }
 }
 
+
+/*********************************************
+ *              Sample usage
+ *********************************************
+ */
+
+// writes each second
 const writeData = new WriteSerialData('log.csv', 1000);
 
+// customize your serial port here
 const port = new SerialPort('COM4', {
     baudRate: 115200,
     dataBits: 8,
@@ -87,6 +104,7 @@ const parser = port.pipe(new ByteLength({
 
 port.pipe(parser);
 
+// to get serial port info
 SerialPort.list((err, ports) => {
     console.log("========= Serial ports info =========")
     ports.forEach((port) => {
@@ -104,13 +122,13 @@ port.on('open', () => console.log('Port open'));
 port.on('error', (err) => {
     console.error('Error: ', err.message);
     writeData.endWrite();
-})
+});
 
 port.on('close', () => {
     console.log('Port closed')
     writeData.endWrite();
-})
+});
 
 parser.on('data', (buff) => {
     writeData.write(buff.toString('hex'))
-})
+});
