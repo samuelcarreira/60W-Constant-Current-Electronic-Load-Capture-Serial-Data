@@ -1,0 +1,26 @@
+{
+  "name": "electronic-load-serial-capture",
+  "productName": "60W Constant Current Electronic Load Capture Serial Data",
+  "version": "1.0.0",
+  "description": "A simple Node.js script to capture serial data from a cheap 60W Constant Current Electronic Load",
+  "main": "index.js",
+  "license": "MIT",
+  "private": false,
+  "author": "Samuel Carreira <samuelcarreira@outlook.com> (http://www.samuelcarreira.com)",
+  "copyright": "© 2017, Samuel Carreira",
+  "bugs": {
+    "email": "samuelcarreira@outlook.com"
+  },
+  "keywords": [
+    "Serial data",
+    "Electronic load",
+    "Plot",
+    "CSV"
+  ],
+  "dependencies": {
+    "serialport": "^6.0.4"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
